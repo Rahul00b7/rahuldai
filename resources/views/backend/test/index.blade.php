@@ -12,9 +12,8 @@
 @section('content')
 <div class="row">
           <div class="col-12">
-
+            
          @include('backend.includes.flash_message')
-         
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">List Test</h3>
