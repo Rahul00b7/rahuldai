@@ -9,7 +9,9 @@ class TestController extends Controller
    public function index(){
 
     $date = [];
-    $data['rows'] = Test::get();  // select * from tests
+    $data['rows'] = Test::latest()->get();
+    
+    // select * from tests
        return view('backend.test.index',compact('data'));
    }
    public function create(){
@@ -32,7 +34,7 @@ class TestController extends Controller
 
     public function show($id){
         $data = [];
-        $data['row'] = Test::find($id);
+        $data['row'] = Test::findOrFail($id);
 
         return view('backend.test.show',compact('data'));
     }
@@ -54,6 +56,17 @@ class TestController extends Controller
         $data['row']->update($request->all());
 
         session()->flash('success_message','Data Updated Successfully');
+
+        return redirect()->route('test.index');
+    }
+
+    public function delete(Request $request,$id){
+        
+        $data['row'] = Test::find($id);
+
+        $data['row']->delete();
+
+        session()->flash('success_message','Data deleted Successfully');
 
         return redirect()->route('test.index');
     }

@@ -1,25 +1,33 @@
 @extends('backend.layouts.app')
 
+@section('css')
+ <!-- DataTables -->
+ <link rel="stylesheet" href="{{asset('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
+  <link rel="stylesheet" href="{{asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+  <link rel="stylesheet" href="{{asset('plugins/datatables-buttons/css/buttons.bootstrap4.min.css')}}">
+@endsection
+
 @section('title','Home')
 
 @section('content')
 <div class="row">
           <div class="col-12">
-          @if(session()->has('success_message'))
-          <div class="alert alert-success alert-dismissible">
 
-          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                  <h5><i class="icon fas fa-check"></i> Alert!</h5>
-                  {{session()->get('success_message')}}
-                </div>
-                @endif
+         @include('backend.includes.flash_message')
+         
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">DataTable with minimal features & hover style</h3>
+                <h3 class="card-title">List Test</h3>
+                </a>
+                    <a class="btn btn-success btn-md float-right" href="{{route('test.create') }}">
+                        <i class="fas fa-pencil-alt">
+                        </i>
+                        Create
+                    </a>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <table id="example2" class="table table-bordered table-hover">
+                <table id="testtable" class="table table-bordered table-hover">
                   <thead>
                   <tr>
                     <th>S.N</th>
@@ -39,28 +47,31 @@
 
                     <td>{{ $row->name }}</td>
                     <td>{{ $row->email }} </td>
-                    <td>{{ $row->created_at}}</td>
-                    <td style="display:flex" >
-                      <a href="{{route('test.show',['id'=> $row->id]) }}" class="btn-success m-1">Show</a>
-                      <a href="{{route('test.edit',['id'=> $row->id]) }}" class="btn-info m-1">Edit</a>
-                    </td>
+                    <td>{{ $row->created_at->diffForHumans()}}</td>
+                    
 
-                    <td class="project-actions text-right">
-                    <a class="btn btn-primary btn-sm" href="{{route('test.show',['id'=> $row->id]) }}">
+                    <td style="display:flex">
+                    <a class="btn btn-primary btn-sm mr-2" href="{{route('test.show',['id'=> $row->id]) }}">
                         <i class="fas fa-folder">
                         </i>
                         Show
                     </a>
-                    <a class="btn btn-info btn-sm" href="{{route('test.edit',['id'=> $row->id]) }}">
+                    <a class="btn btn-info btn-sm mr-2" href="{{route('test.edit',['id'=> $row->id]) }}">
                         <i class="fas fa-pencil-alt">
                         </i>
                         Edit
                     </a>
-                    <a class="btn btn-danger btn-sm" href="#">
+                    <form action="{{ route('test.delete',['id' =>$row->id])}}" method="POST">
+                      @method('delete')
+                      @csrf
+                      <button class ="btn btn-danger btn-sm delete-confirm" type="button">
+                    
                         <i class="fas fa-trash">
                         </i>
                         Delete
-                    </a>
+</button>
+</form>
+                    
                 </td>
 
                   </tr>
@@ -79,4 +90,44 @@
           </div>
           <!-- /.col -->
         </div>
+@endsection
+@section('js')
+<!-- DataTables  & Plugins -->
+<script src="{{asset('plugins/datatables/jquery.dataTables.min.js')}}"></script>
+<script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
+<script src="{{asset('plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
+<script src="{{asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
+<script src="{{asset('plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
+<script src="{{asset('plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
+<script src="{{asset('dist/js/sweetalert.js')}}"> </script>
+<script>
+  $(function () {
+    $("#testtable").DataTable();
+  });
+
+</script>
+<script>
+  $(".delete-confirm").click(function()
+  {
+    Swal.fire({
+  title: 'Are you sure?',
+  text: "You won't be able to revert this!",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, delete it!'
+}).then((result) => {
+  if (result.isConfirmed) {
+     $(this).closest("form").submit();
+    Swal.fire(
+      'Deleted!',
+      'Your file has been deleted.',
+      'success'
+    )
+  }
+})
+});
+
+</script>
 @endsection
